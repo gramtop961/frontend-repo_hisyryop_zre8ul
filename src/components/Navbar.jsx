@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Menu, X, Github, Linkedin, Mail } from 'lucide-react'
+import { Menu, X, Github, Linkedin, Mail, Gauge } from 'lucide-react'
+import { MotionToggle } from './MotionPreferences'
+import { useMotionPrefs } from './MotionPreferences'
 
 const navItems = [
   { label: 'Work', href: '#work' },
@@ -27,9 +29,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const ref = useRef(null)
   const { scrollYProgress } = useScroll()
+  const { multiplier } = useMotionPrefs()
   const backdropOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0.25, 0.45, 0.6])
   const blur = useTransform(scrollYProgress, [0, 1], [6, 10])
-  const y = useTransform(scrollYProgress, [0, 1], [0, -2])
+  const y = useTransform(scrollYProgress, [0, 1], [0, -2 * multiplier])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -50,15 +53,17 @@ export default function Navbar() {
         <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between [transform-style:preserve-3d]">
           <a href="#top" className="font-semibold tracking-tight text-white/90 hover:text-white" style={{ transform: 'translateZ(24px)' }}>dev.studio</a>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <MotionLink key={item.href} href={item.href}>{item.label}</MotionLink>
             ))}
             <div className="h-6 w-px bg-white/10" />
+            <MotionToggle />
+            <div className="h-6 w-px bg-white/10" />
             <div className="flex items-center gap-4">
-              <motion.a href="https://github.com" target="_blank" rel="noreferrer" whileHover={{ rotateY: 8, scale: 1.06 }} className="text-white/70 hover:text-white [transform-style:preserve-3d]" style={{ transform: 'translateZ(18px)' }}><Github size={18} /></motion.a>
-              <motion.a href="https://linkedin.com" target="_blank" rel="noreferrer" whileHover={{ rotateY: -8, scale: 1.06 }} className="text-white/70 hover:text-white [transform-style:preserve-3d]" style={{ transform: 'translateZ(18px)' }}><Linkedin size={18} /></motion.a>
-              <motion.a href="#contact" whileHover={{ rotateX: -6, scale: 1.06 }} className="text-white/70 hover:text-white [transform-style:preserve-3d]" style={{ transform: 'translateZ(18px)' }}><Mail size={18} /></motion.a>
+              <motion.a href="https://github.com" target="_blank" rel="noreferrer" whileHover={{ rotateY: 8 * multiplier, scale: 1.06 }} className="text-white/70 hover:text-white [transform-style:preserve-3d]" style={{ transform: 'translateZ(18px)' }}><Github size={18} /></motion.a>
+              <motion.a href="https://linkedin.com" target="_blank" rel="noreferrer" whileHover={{ rotateY: -8 * multiplier, scale: 1.06 }} className="text-white/70 hover:text-white [transform-style:preserve-3d]" style={{ transform: 'translateZ(18px)' }}><Linkedin size={18} /></motion.a>
+              <motion.a href="#contact" whileHover={{ rotateX: -6 * multiplier, scale: 1.06 }} className="text-white/70 hover:text-white [transform-style:preserve-3d]" style={{ transform: 'translateZ(18px)' }}><Mail size={18} /></motion.a>
             </div>
           </nav>
 
@@ -71,6 +76,10 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden border-t border-white/10 bg-slate-950/80 backdrop-blur">
           <div className="mx-auto max-w-6xl px-6 py-4 space-y-3">
+            <div className="flex items-center justify-between pb-2">
+              <span className="text-white/70 text-sm">Motion</span>
+              <MotionToggle />
+            </div>
             {navItems.map((item) => (
               <a key={item.href} href={item.href} className="block text-white/80 hover:text-white">
                 {item.label}

@@ -1,16 +1,18 @@
 import React, { useRef } from 'react'
 import Spline from '@splinetool/react-spline'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { useMotionPrefs } from './MotionPreferences'
 
 export default function Hero() {
   const ref = useRef(null)
+  const { multiplier } = useMotionPrefs()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
 
-  // Scroll-driven 3D transforms
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2])
-  const rotateX = useTransform(scrollYProgress, [0, 1], [0, 10])
-  const rotateY = useTransform(scrollYProgress, [0, 1], [0, -8])
-  const y = useTransform(scrollYProgress, [0, 1], [0, -80])
+  // Scroll-driven 3D transforms with intensity control
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2 * multiplier])
+  const rotateX = useTransform(scrollYProgress, [0, 1], [0, 10 * multiplier])
+  const rotateY = useTransform(scrollYProgress, [0, 1], [0, -8 * multiplier])
+  const y = useTransform(scrollYProgress, [0, 1], [0, -80 * multiplier])
   const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.85])
 
   return (

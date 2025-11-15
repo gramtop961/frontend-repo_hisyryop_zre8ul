@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
       <Navbar />
-      <main className="relative">
+      <main id="main" className="relative">
         <Hero />
         <section id="skills" className="relative py-24 md:py-32">
           <div className="mx-auto max-w-6xl px-6">

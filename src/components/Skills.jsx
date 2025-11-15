@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Code2, Palette, Sparkles, Layout, Accessibility, Rocket } from 'lucide-react'
+import { useMotionPrefs } from './MotionPreferences'
 
 const skills = [
   { icon: Code2, title: 'Frontend Engineering', desc: 'React, TypeScript, Vite, Tailwind, Framer Motion, Zustand' },
@@ -15,6 +16,7 @@ function TiltCard({ children }) {
   const [rx, setRx] = useState(0)
   const [ry, setRy] = useState(0)
   const ref = useRef(null)
+  const { multiplier } = useMotionPrefs()
 
   const handleMove = (e) => {
     const el = ref.current
@@ -24,7 +26,7 @@ function TiltCard({ children }) {
     const y = e.clientY - rect.top
     const px = (x / rect.width) * 2 - 1 // -1 to 1
     const py = (y / rect.height) * 2 - 1
-    const max = 8
+    const max = 8 * multiplier
     setRy(px * max)
     setRx(-py * max)
   }
@@ -48,10 +50,11 @@ function TiltCard({ children }) {
 
 export default function Skills() {
   const containerRef = useRef(null)
+  const { multiplier } = useMotionPrefs()
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start 0.8', 'end 0.2'] })
   const scale = useTransform(scrollYProgress, [0, 1], [0.96, 1])
-  const rotateX = useTransform(scrollYProgress, [0, 1], [6, 0])
-  const y = useTransform(scrollYProgress, [0, 1], [40, 0])
+  const rotateX = useTransform(scrollYProgress, [0, 1], [6 * multiplier, 0])
+  const y = useTransform(scrollYProgress, [0, 1], [40 * multiplier, 0])
   const opacity = useTransform(scrollYProgress, [0, 0.2], [0.6, 1])
 
   return (

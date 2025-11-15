@@ -1,12 +1,14 @@
 import React, { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { useMotionPrefs } from './MotionPreferences'
 
 export default function Footer() {
   const ref = useRef(null)
+  const { multiplier } = useMotionPrefs()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.9', 'end 0.8'] })
   const opacity = useTransform(scrollYProgress, [0, 1], [0.6, 1])
-  const rotateX = useTransform(scrollYProgress, [0, 1], [6, 0])
-  const y = useTransform(scrollYProgress, [0, 1], [24, 0])
+  const rotateX = useTransform(scrollYProgress, [0, 1], [6 * multiplier, 0])
+  const y = useTransform(scrollYProgress, [0, 1], [24 * multiplier, 0])
 
   return (
     <motion.footer ref={ref} style={{ opacity, rotateX, y }} className="border-t border-white/10 [transform-style:preserve-3d]">

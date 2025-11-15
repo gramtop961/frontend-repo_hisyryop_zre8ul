@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Mail, Send, Sparkles } from 'lucide-react'
+import { useMotionPrefs } from './MotionPreferences'
 
 function useTilt() {
   const ref = useRef(null)
@@ -26,6 +27,7 @@ function useTilt() {
 export default function Contact() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const { multiplier } = useMotionPrefs()
 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -39,8 +41,8 @@ export default function Contact() {
   // Scroll-driven section entrance
   const sectionRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start 0.9', 'end 0.2'] })
-  const rotateX = useTransform(scrollYProgress, [0, 1], [8, 0])
-  const y = useTransform(scrollYProgress, [0, 1], [50, 0])
+  const rotateX = useTransform(scrollYProgress, [0, 1], [8 * multiplier, 0])
+  const y = useTransform(scrollYProgress, [0, 1], [50 * multiplier, 0])
   const opacity = useTransform(scrollYProgress, [0, 0.2], [0.6, 1])
   const scale = useTransform(scrollYProgress, [0, 1], [0.98, 1])
 
@@ -80,7 +82,7 @@ export default function Contact() {
             ref={card.ref}
             onMouseMove={card.onMove}
             onMouseLeave={card.onLeave}
-            style={{ rotateX: card.rx, rotateY: card.ry, transformStyle: 'preserve-3d' }}
+            style={{ rotateX: card.rx * multiplier, rotateY: card.ry * multiplier, transformStyle: 'preserve-3d' }}
             transition={{ type: 'spring', stiffness: 200, damping: 16 }}
             className="flex-1 w-full grid grid-cols-1 gap-4 will-change-transform"
           >
@@ -95,7 +97,7 @@ export default function Contact() {
             </div>
             <motion.button
               disabled={loading || sent}
-              whileHover={{ scale: 1.02, rotateX: -2 }}
+              whileHover={{ scale: 1.02, rotateX: -2 * multiplier }}
               whileTap={{ scale: 0.98 }}
               style={{ transform: 'translateZ(28px)' }}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 ring-1 ring-sky-400/40 hover:bg-sky-400 transition-colors disabled:opacity-60"

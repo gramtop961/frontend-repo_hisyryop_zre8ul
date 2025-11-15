@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
+import { useMotionPrefs } from './MotionPreferences'
 
 const projects = [
   {
@@ -29,8 +30,9 @@ const projects = [
 function ProjectCard({ p, idx }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const rotateY = useTransform(scrollYProgress, [0, 1], [8, -8])
-  const y = useTransform(scrollYProgress, [0, 1], [20, 0])
+  const { multiplier } = useMotionPrefs()
+  const rotateY = useTransform(scrollYProgress, [0, 1], [8 * multiplier, -8 * multiplier])
+  const y = useTransform(scrollYProgress, [0, 1], [20 * multiplier, 0])
   const opacity = useTransform(scrollYProgress, [0, 0.2], [0.6, 1])
 
   return (
@@ -41,11 +43,11 @@ function ProjectCard({ p, idx }) {
       rel="noreferrer"
       style={{ rotateY, y, opacity, transformStyle: 'preserve-3d' }}
       initial={{ scale: 0.98 }}
-      whileHover={{ scale: 1.01, rotateX: -2, rotateY: 2 }}
+      whileHover={{ scale: 1.01, rotateX: -2 * multiplier, rotateY: 2 * multiplier }}
       transition={{ type: 'spring', stiffness: 180, damping: 18 }}
       className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur block will-change-transform"
     >
-      <img src={p.image} alt="project" className="h-56 w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105" />
+      <img src={p.image} alt={`${p.title} preview`} className="h-56 w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105" />
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -66,8 +68,9 @@ function ProjectCard({ p, idx }) {
 
 export default function Projects() {
   const containerRef = useRef(null)
+  const { multiplier } = useMotionPrefs()
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start 0.9', 'end 0.3'] })
-  const rotateX = useTransform(scrollYProgress, [0, 1], [8, 0])
+  const rotateX = useTransform(scrollYProgress, [0, 1], [8 * multiplier, 0])
   const scale = useTransform(scrollYProgress, [0, 1], [0.97, 1])
 
   return (
