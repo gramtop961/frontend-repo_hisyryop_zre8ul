@@ -1,16 +1,34 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Spline from '@splinetool/react-spline'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 
 export default function Hero() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+
+  // Scroll-driven 3D transforms
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.2])
+  const rotateX = useTransform(scrollYProgress, [0, 1], [0, 10])
+  const rotateY = useTransform(scrollYProgress, [0, 1], [0, -8])
+  const y = useTransform(scrollYProgress, [0, 1], [0, -80])
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.85])
+
   return (
-    <section className="relative min-h-[88vh] w-full overflow-hidden" id="top">
-      <div className="absolute inset-0">
-        <Spline scene="https://prod.spline.design/VJLoxp84lCdVfdZu/scene.splinecode" style={{ width: '100%', height: '100%' }} />
-      </div>
+    <section ref={ref} className="relative min-h-[120vh] w-full overflow-hidden" id="top">
+      {/* 3D scene wrapper with scroll-based transforms */}
+      <motion.div
+        className="absolute inset-0 will-change-transform [transform-style:preserve-3d]"
+        style={{ scale, rotateX, rotateY, y, opacity }}
+      >
+        <Spline
+          scene="https://prod.spline.design/VJLoxp84lCdVfdZu/scene.splinecode"
+          style={{ width: '100%', height: '100%' }}
+        />
+        {/* depth gradient + vignette */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_10%_10%,rgba(56,189,248,0.16),transparent_60%),radial-gradient(60%_60%_at_90%_30%,rgba(168,85,247,0.14),transparent_60%),linear-gradient(to_bottom,rgba(2,6,23,0.45),rgba(2,6,23,0.85))]" />
+      </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_10%_10%,rgba(56,189,248,0.16),transparent_60%),radial-gradient(60%_60%_at_90%_30%,rgba(168,85,247,0.14),transparent_60%),linear-gradient(to_bottom,rgba(2,6,23,0.4),rgba(2,6,23,0.8))]" />
-
+      {/* Content layer */}
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-28 md:pt-36">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -35,7 +53,21 @@ export default function Hero() {
             <span className="text-xs">React • TypeScript • Tailwind • Figma • Accessibility</span>
           </div>
         </motion.div>
+
+        {/* Scroll cue */}
+        <motion.div
+          className="mt-16 flex items-center gap-2 text-white/60"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          <span className="h-2 w-2 rounded-full bg-white/50 animate-ping" />
+          <span className="text-sm">Scroll to explore — the 3D scene responds</span>
+        </motion.div>
       </div>
+
+      {/* Spacer to allow meaningful scroll for the 3D parallax */}
+      <div className="h-[40vh]" />
     </section>
   )
 }
